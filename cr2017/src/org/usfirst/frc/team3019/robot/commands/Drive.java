@@ -7,8 +7,8 @@ import org.usfirst.frc.team3019.robot.Robot;
 /**
  *
  */
-public class ExampleCommand extends Command {
-	public ExampleCommand() {
+public class Drive extends Command {
+	public Drive() {
 		// Use requires() here to declare subsystem dependencies
 		requires(Robot.exampleSubsystem);
 	}
