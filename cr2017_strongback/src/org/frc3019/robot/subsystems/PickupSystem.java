@@ -21,7 +21,7 @@ public class PickupSystem implements Requirable{
 		motor.setSpeed(-1.0 * Constants.PICKUP_SCALE_FACTOR);
 	}
 	public void runPickup(ContinuousRange throttleRange){
-		motor.setSpeed(throttleRange.read() * Constants.CLIMBSPEED_SCALE_FACTOR);
+		motor.setSpeed(throttleRange.read() * Constants.PICKUP_SCALE_FACTOR);
 	}
 	
 }
