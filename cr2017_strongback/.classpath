@@ -11,5 +11,11 @@
 	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/strongback.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/TalonSRXLibJava.jar"/>
+	<classpathentry kind="lib" path="C:/Users/FlightGuy/strongback/java/lib-tests/fest-assert-1.4.jar" sourcepath="C:/Users/FlightGuy/strongback/java/lib-tests/fest-assert-1.4-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/FlightGuy/strongback/java/lib-tests/fest-util-1.1.6.jar" sourcepath="C:/Users/FlightGuy/strongback/java/lib-tests/fest-util-1.1.6-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/FlightGuy/strongback/java/lib-tests/hamcrest-core-1.3.jar" sourcepath="C:/Users/FlightGuy/strongback/java/lib-tests/hamcrest-core-1.3-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/FlightGuy/strongback/java/lib-tests/junit-4.11.jar" sourcepath="C:/Users/FlightGuy/strongback/java/lib-tests/junit-4.11-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/FlightGuy/strongback/java/lib-tests/metrics-core-3.1.0.jar" sourcepath="C:/Users/FlightGuy/strongback/java/lib-tests/metrics-core-3.1.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/FlightGuy/strongback/java/lib-tests/strongback-testing.jar" sourcepath="C:/Users/FlightGuy/strongback/java/lib-tests/strongback-testing-sources.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
