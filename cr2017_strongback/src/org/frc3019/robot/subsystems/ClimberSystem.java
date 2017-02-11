@@ -11,7 +11,9 @@ public class ClimberSystem implements Requirable{
 		climberMotor = climbMotor;
 	}
 	public void startClimb(ContinuousRange climbRange){
-		climberMotor.setSpeed(climbRange.read() * Constants.CLIMBSPEED_SCALE_FACTOR);
+		if(climbRange.read() > 0.2){
+			climberMotor.setSpeed(climbRange.read() * Constants.CLIMBSPEED_SCALE_FACTOR);
+		}
 	}
 	public void stopClimb(){
 		climberMotor.stop();
