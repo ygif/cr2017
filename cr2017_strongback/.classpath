@@ -9,7 +9,7 @@
 	<classpathentry kind="var" path="opencv" sourcepath="opencv.sources"/>
 	<classpathentry kind="var" path="cscore" sourcepath="cscore.sources"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
-	<classpathentry kind="var" path="USERLIBS_DIR/strongback.jar"/>
+	<classpathentry kind="var" path="USERLIBS_DIR/strongback.jar" sourcepath="/strongbacksource"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/TalonSRXLibJava.jar"/>
 	<classpathentry kind="lib" path="C:/Users/FlightGuy/strongback/java/lib-tests/fest-assert-1.4.jar" sourcepath="C:/Users/FlightGuy/strongback/java/lib-tests/fest-assert-1.4-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/FlightGuy/strongback/java/lib-tests/fest-util-1.1.6.jar" sourcepath="C:/Users/FlightGuy/strongback/java/lib-tests/fest-util-1.1.6-sources.jar"/>
