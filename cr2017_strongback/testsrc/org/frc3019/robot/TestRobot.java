@@ -6,10 +6,10 @@ import org.junit.Assert;
 
 public class TestRobot {
 
-    @Test
-    public void test() {
-        // do something here
-    	
-    }
+	@Test
+	public void test() {
+		// do something here
+
+	}
 
 }
