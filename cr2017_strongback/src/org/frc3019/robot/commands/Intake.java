@@ -25,7 +25,7 @@ public class Intake extends Command {
 	public boolean execute() {
 		if (Robot.pickupPowerState == SystemStates.ON) {
 			Robot.pickupPowerState = SystemStates.OFF;
-		} else {
+		}else {
 			Robot.pickupPowerState = SystemStates.ON;
 		}
 		return true;
