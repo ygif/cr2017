@@ -33,9 +33,9 @@ public class Robot extends IterativeRobot {
 	private Switch shooterSwitch;
 	private Switch pickupReverseSwitch;
 	private Switch pickupPowerSwitch;
-	public static PickupState pickupStates = PickupState.STOPPED;
+	public static PickupState pickupStates = PickupState.OUTTAKE;
 	public static SystemStates sysStates;
-	public static SystemStates pickupPowerState;
+	public static SystemStates pickupPowerState = SystemStates.OFF;
 
 	/*
 	 * @see edu.wpi.first.wpilibj.IterativeRobot#robotInit()
@@ -48,7 +48,6 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		Strongback.configure().recordDataToFile(Constants.LOGFILE_PATH).recordEventsToFile(Constants.LOGFILE_PATH,
 				2097152);
-
 		makeDriveSystem();
 		makePickup();
 		makeClimber();
@@ -108,6 +107,7 @@ public class Robot extends IterativeRobot {
 	 */
 	private void makePickup() {
 		Motor pickupMotor = Hardware.Motors.victorSP(Constants.PICKUP_MOTOR_PWM);
+		pickupMotor.invert();
 		pickupSystem = new PickupSystem(pickupMotor);
 	}
 
@@ -120,7 +120,7 @@ public class Robot extends IterativeRobot {
 		Motor leftRearMotor = Hardware.Motors.victorSP(Constants.LEFT_REAR_MOTOR_PWM);
 		Motor rightFrontMotor = Hardware.Motors.victorSP(Constants.RIGHT_FRONT_MOTOR_PWM);
 		Motor rightRearMotor = Hardware.Motors.victorSP(Constants.RIGHT_REAR_MOTOR_PWM);
-		Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor);
+		Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor).invert();
 		Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor);
 		TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
 		driveSystem = new DriveSystem(tankDrive);
@@ -146,6 +146,8 @@ public class Robot extends IterativeRobot {
 		}
 
 		driveSystem.arcadeDrive(speed.read(), turn.read());
+		SmartDashboard.putString("pickupPowerState", pickupPowerState.toString());
+		SmartDashboard.putString("pickupStates", pickupStates.toString());
 		SmartDashboard.putNumber("climber throttle", climbThrottle.read());
 		SmartDashboard.putNumber("speed value", speed.read());
 		SmartDashboard.putNumber("turn value", turn.read());

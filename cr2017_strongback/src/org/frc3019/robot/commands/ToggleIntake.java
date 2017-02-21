@@ -16,9 +16,9 @@ public class ToggleIntake extends Command {
 	public boolean execute() {
 		if (Robot.pickupStates == PickupState.INTAKE) {
 			Robot.pickupStates = PickupState.OUTTAKE;
-		} else if (Robot.pickupStates == PickupState.OUTTAKE) {
+		} else {
 			Robot.pickupStates = PickupState.INTAKE;
-		}
+		} 
 		return true;
 	}
 
