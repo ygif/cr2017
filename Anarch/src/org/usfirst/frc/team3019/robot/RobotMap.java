@@ -11,8 +11,8 @@ public class RobotMap {
 	public static final double DRIVE_SCALE_FACTOR = 1.0;
 	public static final double PICKUP_SCALE_FACTOR = 1.0;
 	public static final double CLIMBSPEED_SCALE_FACTOR = 1.0;
-	public static final double SHOOTSPEED_SCALE_FACTOR = 0.42;
-	public static final double AGITATORSPEED_SCALE_FACTOR = -0.2;
+	public static final double SHOOTSPEED_SCALE_FACTOR = 0.4;
+	public static final double AGITATORSPEED_SCALE_FACTOR = -0.5;
 	
 	public static int leftFrontMotor = 0;
 	public static int leftRearMotor = 1;

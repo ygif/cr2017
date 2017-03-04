@@ -9,8 +9,8 @@ import org.usfirst.frc.team3019.robot.commands.AgitateWhile;
 import org.usfirst.frc.team3019.robot.commands.Climb;
 import org.usfirst.frc.team3019.robot.commands.Drive;
 import org.usfirst.frc.team3019.robot.commands.ShootWhile;
-import org.usfirst.frc.team3019.robot.utilites.PickupState;
-import org.usfirst.frc.team3019.robot.utilites.SystemStates;
+import org.usfirst.frc.team3019.robot.utilities.PickupState;
+import org.usfirst.frc.team3019.robot.utilities.SystemStates;
 
 /**
  * This class is the glue that binds the controls on the physical operator

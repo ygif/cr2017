@@ -1,6 +1,8 @@
 package org.usfirst.frc.team3019.robot.commands;
 
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team3019.robot.Robot;
 
@@ -8,10 +10,17 @@ import org.usfirst.frc.team3019.robot.Robot;
  *
  */
 public class Drive extends Command {
-	
+	double move;
+	double turn;
 	public Drive() {
 		super();
 		requires(Robot.driveTrain);
+	}
+	public Drive(double move, double turn){
+		super();
+		requires(Robot.driveTrain);
+		this.move = move;
+		this.turn = turn;
 	}
 
 	// Called just before this Command runs the first time
@@ -22,8 +31,12 @@ public class Drive extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		double move = -Robot.oi.xbox.getY();
-		double turn = -Robot.oi.xbox.getX();
+		SmartDashboard.putNumber("move", move);
+		SmartDashboard.putNumber("turn", turn);
+		if(RobotState.isOperatorControl()){
+		move = -Robot.oi.xbox.getY();
+		turn = -Robot.oi.xbox.getX();
+		}
 		Robot.driveTrain.arcadeDrive(move, turn);
 	}
 

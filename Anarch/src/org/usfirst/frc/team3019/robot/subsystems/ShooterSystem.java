@@ -20,11 +20,11 @@ public class ShooterSystem extends Subsystem {
 	}
 	
 	public void runMotor(){
-		shootMotor.set(RobotMap.SHOOTSPEED_SCALE_FACTOR * Robot.oi.xbox.getRawAxis(3));
+		shootMotor.set(RobotMap.SHOOTSPEED_SCALE_FACTOR);
 	}
 	
 	public void reverseMotor(){
-		shootMotor.set(-RobotMap.SHOOTSPEED_SCALE_FACTOR  * Robot.oi.xbox.getRawAxis(2));
+		shootMotor.set(-RobotMap.SHOOTSPEED_SCALE_FACTOR);
 	}
 	
 	public void stopMotor(){
