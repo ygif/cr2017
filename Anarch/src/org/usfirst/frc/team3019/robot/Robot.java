@@ -14,14 +14,17 @@ import edu.wpi.first.wpilibj.CameraServer;
 
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
+import org.usfirst.frc.team3019.robot.commands.AutonomousCommandGroup;
 import org.usfirst.frc.team3019.robot.commands.Drive;
 import org.usfirst.frc.team3019.robot.subsystems.AgitatorSystem;
 import org.usfirst.frc.team3019.robot.subsystems.ClimberSystem;
 import org.usfirst.frc.team3019.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3019.robot.subsystems.PickupSystem;
 import org.usfirst.frc.team3019.robot.subsystems.ShooterSystem;
-import org.usfirst.frc.team3019.robot.utilites.PickupState;
-import org.usfirst.frc.team3019.robot.utilites.SystemStates;
+import org.usfirst.frc.team3019.robot.utilities.AutonomousMode;
+import org.usfirst.frc.team3019.robot.utilities.CurrentAutoCommand;
+import org.usfirst.frc.team3019.robot.utilities.PickupState;
+import org.usfirst.frc.team3019.robot.utilities.SystemStates;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,17 +39,24 @@ public class Robot extends IterativeRobot {
 
     public static SystemStates pickupPowerState = SystemStates.OFF;
 	public static PickupState pickupStates = PickupState.INTAKE;
+	public static CurrentAutoCommand currentAutoCommand = CurrentAutoCommand.STOP;
 	
-	public static final Drivetrain driveTrain = new Drivetrain();
-	public static final PickupSystem pickupSystem = new PickupSystem();
-	public static final ShooterSystem shooterSystem = new ShooterSystem();
-	public static final ClimberSystem climberSystem = new ClimberSystem();
-	public static final AgitatorSystem agitatorSystem = new AgitatorSystem();
+	public static Drivetrain driveTrain;
+	public static PickupSystem pickupSystem;
+	public static ShooterSystem shooterSystem;
+	public static ClimberSystem climberSystem;
+	public static AgitatorSystem agitatorSystem;
 	public static OI oi;
 
 	Command autonomousCommand;
-	SendableChooser<Command> chooser = new SendableChooser<>();
+	SendableChooser<Command> chooser = new SendableChooser<Command>();
 
+	public Robot() {
+		instantiateSubsystems();
+		chooser.addDefault("DRIVEFWD", new AutonomousCommandGroup(AutonomousMode.DRIVEFWD));
+		chooser.addObject("TENSHOT", new AutonomousCommandGroup(AutonomousMode.TENSHOT));
+		SmartDashboard.putData("Auto mode", chooser);
+	}
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -54,13 +64,21 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
-		
-		
 		oi = new OI();
-		chooser.addDefault("Default Auto", new Drive());
+		
 		CameraServer.getInstance().startAutomaticCapture();
 		// chooser.addObject("My Auto", new MyAutoCommand());
-		SmartDashboard.putData("Auto mode", chooser);
+		
+	}
+
+	private void instantiateSubsystems() {
+		// TODO Auto-generated method stub
+
+		driveTrain = new Drivetrain();
+		pickupSystem = new PickupSystem();
+		shooterSystem = new ShooterSystem();
+		climberSystem = new ClimberSystem();
+		agitatorSystem = new AgitatorSystem();
 	}
 
 	/**
@@ -75,6 +93,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void disabledPeriodic() {
+		SmartDashboard.putData("Autonomous Picker",chooser);
 		Scheduler.getInstance().run();
 	}
 
@@ -110,6 +129,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		SmartDashboard.putString("Current Auto Command: ", String.valueOf(currentAutoCommand));
 		Scheduler.getInstance().run();
 	}
 
@@ -137,6 +157,7 @@ public class Robot extends IterativeRobot {
 		} else {
 			pickupSystem.stopMotor();
 		}
+		SmartDashboard.putBoolean("Joystick",oi.shooterSwitch.get());
 		SmartDashboard.putString("pickupState", pickupStates.toString());
 		Scheduler.getInstance().run();
 	}

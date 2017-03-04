@@ -17,11 +17,7 @@ public class ShootWhile extends Command {
 	}
 	
 	protected void execute(){
-		if(Robot.oi.xbox.getRawAxis(3) > 0){
-			Robot.shooterSystem.runMotor();
-		} else if (Robot.oi.xbox.getRawAxis(2) > 0){
-			Robot.shooterSystem.reverseMotor();
-		}
+		Robot.shooterSystem.runMotor();
 	}
 	
 	protected void end() {
