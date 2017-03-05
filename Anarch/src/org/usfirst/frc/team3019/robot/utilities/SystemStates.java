@@ -1,4 +1,4 @@
-package org.frc3019.robot.util;
+package org.usfirst.frc.team3019.robot.utilities;
 
 public enum SystemStates {
 	FORWARD, ON, OFF, REVERSE, STOPPED;
