@@ -11,6 +11,7 @@ import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -53,9 +54,13 @@ public class Robot extends IterativeRobot {
 
 	public Robot() {
 		instantiateSubsystems();
+		//create the chooser with all auto options
 		chooser.addDefault("DRIVEFWD", new AutonomousCommandGroup(AutonomousMode.DRIVEFWD));
-		chooser.addObject("TENSHOT", new AutonomousCommandGroup(AutonomousMode.TENSHOT));
-		SmartDashboard.putData("Auto mode", chooser);
+		chooser.addObject("TENSHOTRED", new AutonomousCommandGroup(AutonomousMode.TENSHOTRED));
+		chooser.addObject("TENSHOTBLUE", new AutonomousCommandGroup(AutonomousMode.TENSHOTBLUE));
+		chooser.addObject("TESTAUTO", new AutonomousCommandGroup(AutonomousMode.TESTAUTOBLUE));
+		chooser.addObject("GEARBLUE", new AutonomousCommandGroup(AutonomousMode.GEARBLUE));
+		chooser.addObject("COMBOBLUE", new AutonomousCommandGroup(AutonomousMode.BLUECOMBO));
 	}
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -65,8 +70,24 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		
 		oi = new OI();
-		
-		CameraServer.getInstance().startAutomaticCapture();
+		new Thread(() -> {
+			
+            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setResolution(640, 480);
+            
+            CvSink cvSink = CameraServer.getInstance().getVideo();
+            CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
+            
+            Mat source = new Mat();
+            Mat output = new Mat();
+            
+            while(!Thread.interrupted()) {
+                cvSink.grabFrame(source);
+                Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+                outputStream.putFrame(output);
+            }
+			
+        }).start();
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		
 	}
@@ -93,7 +114,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void disabledPeriodic() {
-		SmartDashboard.putData("Autonomous Picker",chooser);
+
+		SmartDashboard.putData("autochooser",chooser);
 		Scheduler.getInstance().run();
 	}
 
@@ -157,6 +179,8 @@ public class Robot extends IterativeRobot {
 		} else {
 			pickupSystem.stopMotor();
 		}
+		SmartDashboard.putNumber("drivefactor",RobotMap.DRIVE_SCALE_FACTOR);
+		SmartDashboard.putNumber("shooterSpeed",RobotMap.SHOOTSPEED_SCALE_FACTOR);
 		SmartDashboard.putBoolean("Joystick",oi.shooterSwitch.get());
 		SmartDashboard.putString("pickupState", pickupStates.toString());
 		Scheduler.getInstance().run();

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team3019.robot.Robot;
+import org.usfirst.frc.team3019.robot.RobotMap;
 
 /**
  *
@@ -34,8 +35,16 @@ public class Drive extends Command {
 		SmartDashboard.putNumber("move", move);
 		SmartDashboard.putNumber("turn", turn);
 		if(RobotState.isOperatorControl()){
+			
+		if(RobotMap.orientForward){	
 		move = -Robot.oi.xbox.getY();
 		turn = -Robot.oi.xbox.getX();
+		}else{
+			move = Robot.oi.xbox.getY();
+			turn = Robot.oi.xbox.getX();
+		}
+		
+		
 		}
 		Robot.driveTrain.arcadeDrive(move, turn);
 	}

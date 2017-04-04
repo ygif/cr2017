@@ -24,6 +24,7 @@ public class Drivetrain extends Subsystem {
 		rightFrontMotor = new VictorSP(RobotMap.rightFrontMotor);
 		rightRearMotor = new VictorSP(RobotMap.rightRearMotor);
 		rDrive = new RobotDrive(leftFrontMotor, leftRearMotor, rightFrontMotor, rightRearMotor);
+		rDrive.setSafetyEnabled(false);
 	}
 	
 	public void initDefaultCommand() {
@@ -31,6 +32,6 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	public void arcadeDrive(double moveValue, double rotateValue){
-		rDrive.arcadeDrive(moveValue, rotateValue);
+		rDrive.arcadeDrive(moveValue * RobotMap.DRIVE_SCALE_FACTOR, rotateValue * RobotMap.DRIVE_SCALE_FACTOR);
 	}
 }
