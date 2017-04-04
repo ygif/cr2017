@@ -22,6 +22,9 @@ public class ShooterSystem extends Subsystem {
 	public void runMotor(){
 		shootMotor.set(RobotMap.SHOOTSPEED_SCALE_FACTOR);
 	}
+	public void setMotorSpeed(double speed){
+		shootMotor.set(speed);
+	}
 	
 	public void reverseMotor(){
 		shootMotor.set(-RobotMap.SHOOTSPEED_SCALE_FACTOR);

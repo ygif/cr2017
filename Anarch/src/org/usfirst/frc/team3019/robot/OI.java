@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3019.robot.commands.AgitateWhile;
 import org.usfirst.frc.team3019.robot.commands.Climb;
 import org.usfirst.frc.team3019.robot.commands.Drive;
+import org.usfirst.frc.team3019.robot.commands.ModifyShootSpeed;
 import org.usfirst.frc.team3019.robot.commands.ShootWhile;
 import org.usfirst.frc.team3019.robot.utilities.PickupState;
 import org.usfirst.frc.team3019.robot.utilities.SystemStates;
@@ -31,8 +32,62 @@ public class OI {
 	Button agitatorSwitch = new JoystickButton(xbox, 1);
 	Button shooterSwitch = new JoystickButton(xbox, 3);
 	Button pickupPowerSwitch = new JoystickButton(xbox, 4);
+	Button shootSpeedUpSwitch = new JoystickButton(xbox, 8);
+	Button shootSpeedDownSwitch = new JoystickButton(xbox, 7);
+	Button fullpowerShot = new JoystickButton(xbox,9);
+	Button nerfButton = new JoystickButton(xbox,10);
+	Button toggleDriveOrientation = new JoystickButton(xbox, 5);
 	
 	public OI(){
+		toggleDriveOrientation.whenPressed(new Command() {
+			@Override
+			protected void initialize() {
+				// TODO Auto-generated method stub
+				RobotMap.orientForward = !RobotMap.orientForward;
+			}
+			@Override
+			protected boolean isFinished() {
+				// TODO Auto-generated method stub
+				return true;
+			}
+		});
+		fullpowerShot.whileHeld(new Command() {
+			@Override
+			protected void execute() {
+				// TODO Auto-generated method stub
+				RobotMap.SHOOTSPEED_SCALE_FACTOR = 1;
+			}
+			
+			@Override
+			protected boolean isFinished() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			@Override
+			protected void end() {
+				// TODO Auto-generated method stub
+				RobotMap.SHOOTSPEED_SCALE_FACTOR = 0.43;
+			}
+		});
+		nerfButton.whileHeld(new Command() {
+			
+			@Override
+			protected boolean isFinished() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			@Override
+			protected void execute() {
+				// TODO Auto-generated method stub
+				RobotMap.DRIVE_SCALE_FACTOR = 0.5;
+				
+			}
+			@Override
+			protected void end() {
+				// TODO Auto-generated method stub
+				RobotMap.DRIVE_SCALE_FACTOR = 1;
+			}
+		});
 		pickupThrottle.whileHeld(new Command(){
 
 			@Override
@@ -71,6 +126,8 @@ public class OI {
 			}
 			
 		});
+		shootSpeedUpSwitch.whenPressed(new ModifyShootSpeed(true));
+		shootSpeedDownSwitch.whenPressed(new ModifyShootSpeed(false));
 		agitatorSwitch.whileHeld(new AgitateWhile());
 		shooterSwitch.whileHeld(new ShootWhile());
 		climbThrottle.whileHeld(new Climb());
