@@ -5,18 +5,18 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.DriverStation;
-
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team3019.robot.commands.AutonomousCommandGroup;
-import org.usfirst.frc.team3019.robot.commands.Drive;
 import org.usfirst.frc.team3019.robot.subsystems.AgitatorSystem;
 import org.usfirst.frc.team3019.robot.subsystems.ClimberSystem;
 import org.usfirst.frc.team3019.robot.subsystems.Drivetrain;
@@ -51,6 +51,7 @@ public class Robot extends IterativeRobot {
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<Command>();
+	NetworkTable table;
 
 	public Robot() {
 		instantiateSubsystems();
@@ -68,7 +69,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		
 		oi = new OI();
 		new Thread(() -> {
 			
@@ -88,12 +88,9 @@ public class Robot extends IterativeRobot {
             }
 			
         }).start();
-		// chooser.addObject("My Auto", new MyAutoCommand());
-		
 	}
 
 	private void instantiateSubsystems() {
-		// TODO Auto-generated method stub
 
 		driveTrain = new Drivetrain();
 		pickupSystem = new PickupSystem();
@@ -114,7 +111,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void disabledPeriodic() {
-
 		SmartDashboard.putData("autochooser",chooser);
 		Scheduler.getInstance().run();
 	}
@@ -133,13 +129,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		autonomousCommand = chooser.getSelected();
-
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
 
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null)
@@ -179,6 +168,7 @@ public class Robot extends IterativeRobot {
 		} else {
 			pickupSystem.stopMotor();
 		}
+		
 		SmartDashboard.putNumber("drivefactor",RobotMap.DRIVE_SCALE_FACTOR);
 		SmartDashboard.putNumber("shooterSpeed",RobotMap.SHOOTSPEED_SCALE_FACTOR);
 		SmartDashboard.putBoolean("Joystick",oi.shooterSwitch.get());

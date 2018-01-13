@@ -101,7 +101,7 @@ public class AutonomousCommandGroup extends CommandGroup {
 				}
 			});
     	}else if(mode == AutonomousMode.BLUECOMBO){
-    		double shootSpeed = 0.4255;
+    		//double shootSpeed = 0.4255;
     		addSequential(new Drive(-0.80,0.4),1.7);
     		addSequential(new Drive(0,0),0.3);
     		

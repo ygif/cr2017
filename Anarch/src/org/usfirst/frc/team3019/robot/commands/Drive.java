@@ -11,13 +11,16 @@ import org.usfirst.frc.team3019.robot.RobotMap;
  *
  */
 public class Drive extends Command {
+	
 	double move;
 	double turn;
+
 	public Drive() {
 		super();
 		requires(Robot.driveTrain);
 	}
-	public Drive(double move, double turn){
+
+	public Drive(double move, double turn) {
 		super();
 		requires(Robot.driveTrain);
 		this.move = move;
@@ -34,17 +37,16 @@ public class Drive extends Command {
 	protected void execute() {
 		SmartDashboard.putNumber("move", move);
 		SmartDashboard.putNumber("turn", turn);
-		if(RobotState.isOperatorControl()){
-			
-		if(RobotMap.orientForward){	
-		move = -Robot.oi.xbox.getY();
-		turn = -Robot.oi.xbox.getX();
-		}else{
-			move = Robot.oi.xbox.getY();
-			turn = Robot.oi.xbox.getX();
-		}
-		
-		
+		if (RobotState.isOperatorControl()) {
+
+			if (RobotMap.orientForward) {
+				move = -Robot.oi.xbox.getY();
+				turn = -Robot.oi.xbox.getX();
+			} else {
+				move = Robot.oi.xbox.getY();
+				turn = Robot.oi.xbox.getX();
+			}
+
 		}
 		Robot.driveTrain.arcadeDrive(move, turn);
 	}

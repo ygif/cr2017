@@ -36,7 +36,7 @@ public class OI {
 	Button shootSpeedDownSwitch = new JoystickButton(xbox, 7);
 	Button fullpowerShot = new JoystickButton(xbox,9);
 	Button nerfButton = new JoystickButton(xbox,10);
-	Button toggleDriveOrientation = new JoystickButton(xbox, 5);
+	Button toggleDriveOrientation = new JoystickButton(xbox, 5); 
 	
 	public OI(){
 		toggleDriveOrientation.whenPressed(new Command() {
