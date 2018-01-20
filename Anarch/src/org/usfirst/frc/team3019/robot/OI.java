@@ -1,17 +1,15 @@
 package org.usfirst.frc.team3019.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 
 import org.usfirst.frc.team3019.robot.commands.AgitateWhile;
 import org.usfirst.frc.team3019.robot.commands.Climb;
-import org.usfirst.frc.team3019.robot.commands.Drive;
 import org.usfirst.frc.team3019.robot.commands.ModifyShootSpeed;
 import org.usfirst.frc.team3019.robot.commands.ShootWhile;
-import org.usfirst.frc.team3019.robot.utilities.PickupState;
-import org.usfirst.frc.team3019.robot.utilities.SystemStates;
+import org.usfirst.frc.team3019.robot.utilities.PlaybackButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -25,7 +23,8 @@ public class OI {
 	// number it is.
 	// Joystick stick = new Joystick(port);
 	// Button button = new JoystickButton(stick, buttonNumber);
-	public Joystick xbox = new Joystick(RobotMap.xbox1Port);
+	//public Joystick xbox = new Joystick(RobotMap.xbox1Port);
+	public XboxController xbox = new XboxController(RobotMap.xbox1Port);
 	
 	Button pickupThrottle = new JoystickButton(xbox, 2);
 	Button climbThrottle = new JoystickButton(xbox, 6);
@@ -42,30 +41,25 @@ public class OI {
 		toggleDriveOrientation.whenPressed(new Command() {
 			@Override
 			protected void initialize() {
-				// TODO Auto-generated method stub
 				RobotMap.orientForward = !RobotMap.orientForward;
 			}
 			@Override
 			protected boolean isFinished() {
-				// TODO Auto-generated method stub
 				return true;
 			}
 		});
 		fullpowerShot.whileHeld(new Command() {
 			@Override
 			protected void execute() {
-				// TODO Auto-generated method stub
 				RobotMap.SHOOTSPEED_SCALE_FACTOR = 1;
 			}
 			
 			@Override
 			protected boolean isFinished() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			@Override
 			protected void end() {
-				// TODO Auto-generated method stub
 				RobotMap.SHOOTSPEED_SCALE_FACTOR = 0.43;
 			}
 		});
@@ -73,18 +67,15 @@ public class OI {
 			
 			@Override
 			protected boolean isFinished() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			@Override
 			protected void execute() {
-				// TODO Auto-generated method stub
 				RobotMap.DRIVE_SCALE_FACTOR = 0.5;
 				
 			}
 			@Override
 			protected void end() {
-				// TODO Auto-generated method stub
 				RobotMap.DRIVE_SCALE_FACTOR = 1;
 			}
 		});
@@ -102,7 +93,6 @@ public class OI {
 			
 			@Override
 			protected boolean isFinished() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			
@@ -121,7 +111,6 @@ public class OI {
 			
 			@Override
 			protected boolean isFinished() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			

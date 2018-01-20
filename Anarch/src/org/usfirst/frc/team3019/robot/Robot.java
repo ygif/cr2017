@@ -2,18 +2,20 @@
 package org.usfirst.frc.team3019.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team3019.robot.commands.AutonomousCommandGroup;
@@ -35,13 +37,13 @@ import org.usfirst.frc.team3019.robot.utilities.SystemStates;
  * directory.
  */
 
-
+// /c/home/lvuser/
 public class Robot extends IterativeRobot {
 
-    public static SystemStates pickupPowerState = SystemStates.OFF;
+	public static SystemStates pickupPowerState = SystemStates.OFF;
 	public static PickupState pickupStates = PickupState.INTAKE;
 	public static CurrentAutoCommand currentAutoCommand = CurrentAutoCommand.STOP;
-	
+
 	public static Drivetrain driveTrain;
 	public static PickupSystem pickupSystem;
 	public static ShooterSystem shooterSystem;
@@ -51,11 +53,12 @@ public class Robot extends IterativeRobot {
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<Command>();
-	NetworkTable table;
+	NetworkTableInstance nti = NetworkTableInstance.create();
+	NetworkTableEntry nte;
 
 	public Robot() {
 		instantiateSubsystems();
-		//create the chooser with all auto options
+		// create the chooser with all auto options
 		chooser.addDefault("DRIVEFWD", new AutonomousCommandGroup(AutonomousMode.DRIVEFWD));
 		chooser.addObject("TENSHOTRED", new AutonomousCommandGroup(AutonomousMode.TENSHOTRED));
 		chooser.addObject("TENSHOTBLUE", new AutonomousCommandGroup(AutonomousMode.TENSHOTBLUE));
@@ -63,35 +66,41 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("GEARBLUE", new AutonomousCommandGroup(AutonomousMode.GEARBLUE));
 		chooser.addObject("COMBOBLUE", new AutonomousCommandGroup(AutonomousMode.BLUECOMBO));
 	}
+
 	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
+	 * This function is run when the robot is first started up and should be used
+	 * for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
 		oi = new OI();
-		new Thread(() -> {
-			
-            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-            camera.setResolution(640, 480);
-            
-            CvSink cvSink = CameraServer.getInstance().getVideo();
-            CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
-            
-            Mat source = new Mat();
-            Mat output = new Mat();
-            
-            while(!Thread.interrupted()) {
-                cvSink.grabFrame(source);
-                Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
-                outputStream.putFrame(output);
-            }
-			
-        }).start();
+
+		nti = NetworkTableInstance.create();
+		nti.startServer();
+		nte = new NetworkTableEntry(nti, NetworkTableEntry.kPersistent);
+		nte.setDefaultDouble(0.0);
+
+		/*new Thread(() -> {
+
+			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+			camera.setResolution(640, 480);
+
+			CvSink cvSink = CameraServer.getInstance().getVideo();
+			CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
+
+			Mat source = new Mat();
+			Mat output = new Mat();
+
+			while (!Thread.interrupted()) {
+				cvSink.grabFrame(source);
+				Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+				outputStream.putFrame(output);
+			}
+
+		}).start();*/
 	}
 
 	private void instantiateSubsystems() {
-
 		driveTrain = new Drivetrain();
 		pickupSystem = new PickupSystem();
 		shooterSystem = new ShooterSystem();
@@ -100,9 +109,9 @@ public class Robot extends IterativeRobot {
 	}
 
 	/**
-	 * This function is called once each time the robot enters Disabled mode.
-	 * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
+	 * This function is called once each time the robot enters Disabled mode. You
+	 * can use it to reset any subsystem information you want to clear when the
+	 * robot is disabled.
 	 */
 	@Override
 	public void disabledInit() {
@@ -111,20 +120,21 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void disabledPeriodic() {
-		SmartDashboard.putData("autochooser",chooser);
+		putTestInfo();
+
 		Scheduler.getInstance().run();
 	}
 
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
+	 * between different autonomous modes using the dashboard. The sendable chooser
+	 * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+	 * remove all of the chooser code and uncomment the getString code to get the
+	 * auto name from the text box below the Gyro
 	 *
 	 * You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
+	 * chooser code above (like the commented example) or additional comparisons to
+	 * the switch structure below with additional strings & commands.
 	 */
 	@Override
 	public void autonomousInit() {
@@ -159,8 +169,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if(pickupPowerState == SystemStates.ON){
-			if(pickupStates == PickupState.OUTTAKE){
+		if (pickupPowerState == SystemStates.ON) {
+			if (pickupStates == PickupState.OUTTAKE) {
 				pickupSystem.reverseMotor();
 			} else {
 				pickupSystem.runMotor();
@@ -168,12 +178,20 @@ public class Robot extends IterativeRobot {
 		} else {
 			pickupSystem.stopMotor();
 		}
-		
-		SmartDashboard.putNumber("drivefactor",RobotMap.DRIVE_SCALE_FACTOR);
-		SmartDashboard.putNumber("shooterSpeed",RobotMap.SHOOTSPEED_SCALE_FACTOR);
-		SmartDashboard.putBoolean("Joystick",oi.shooterSwitch.get());
+
+		putTestInfo();
+		SmartDashboard.putNumber("drivefactor", RobotMap.DRIVE_SCALE_FACTOR);
+		SmartDashboard.putNumber("shooterSpeed", RobotMap.SHOOTSPEED_SCALE_FACTOR);
+		SmartDashboard.putBoolean("Joystick", oi.shooterSwitch.get());
 		SmartDashboard.putString("pickupState", pickupStates.toString());
 		Scheduler.getInstance().run();
+	}
+	
+	private void putTestInfo() {
+		SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
+		SmartDashboard.putString("buttons", Integer.toBinaryString(DriverStation.getInstance().getStickButtons(1)));
+		SmartDashboard.putString("left axis", Double.toString(DriverStation.getInstance().getStickAxis(1, 0)) + " , "
+				+ Double.toString(DriverStation.getInstance().getStickAxis(1, 1)));
 	}
 
 	/**

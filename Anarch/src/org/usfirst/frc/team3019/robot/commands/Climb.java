@@ -17,14 +17,14 @@ public class Climb extends Command {
 	}
 
 	protected void execute(){
-		Robot.climberSystem.runMotor();;
+		Robot.climberSystem.runMotor();
 	}
 	
 	protected void end(){
 		Robot.climberSystem.stopMotor();
+		System.out.println(timeSinceInitialized());
 	}
 	
-	protected void interrupted(){
-		end();
+	protected void interrupted(){		end();
 	}
 }

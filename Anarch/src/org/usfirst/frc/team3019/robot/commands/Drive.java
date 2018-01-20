@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3019.robot.commands;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,11 +41,11 @@ public class Drive extends Command {
 		if (RobotState.isOperatorControl()) {
 
 			if (RobotMap.orientForward) {
-				move = -Robot.oi.xbox.getY();
-				turn = -Robot.oi.xbox.getX();
+				move = -Robot.oi.xbox.getY(Hand.kLeft);
+				turn = Robot.oi.xbox.getX(Hand.kLeft);
 			} else {
-				move = Robot.oi.xbox.getY();
-				turn = Robot.oi.xbox.getX();
+				move = Robot.oi.xbox.getY(Hand.kLeft);
+				turn = Robot.oi.xbox.getX(Hand.kLeft);
 			}
 
 		}
