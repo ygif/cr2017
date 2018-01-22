@@ -9,7 +9,6 @@ import org.usfirst.frc.team3019.robot.commands.AgitateWhile;
 import org.usfirst.frc.team3019.robot.commands.Climb;
 import org.usfirst.frc.team3019.robot.commands.ModifyShootSpeed;
 import org.usfirst.frc.team3019.robot.commands.ShootWhile;
-import org.usfirst.frc.team3019.robot.utilities.PlaybackButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator

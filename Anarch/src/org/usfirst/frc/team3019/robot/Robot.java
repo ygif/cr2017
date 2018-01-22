@@ -37,7 +37,6 @@ import org.usfirst.frc.team3019.robot.utilities.SystemStates;
  * directory.
  */
 
-// /c/home/lvuser/
 public class Robot extends IterativeRobot {
 
 	public static SystemStates pickupPowerState = SystemStates.OFF;

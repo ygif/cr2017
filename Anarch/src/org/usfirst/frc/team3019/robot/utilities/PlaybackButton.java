@@ -5,19 +5,19 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class PlaybackButton extends JoystickButton{
 	
-	private boolean isActive;
+	private boolean forceActive;
 
 	public PlaybackButton(GenericHID joystick, int buttonNumber) {
 		super(joystick, buttonNumber);
-		isActive = false;
+		forceActive = false;
 	}
 	
 	@Override
 	public boolean get() {
-		return isActive || super.get();
+		return forceActive || super.get();
 	}
 	
 	public void setActive(boolean b) {
-		isActive = b;
+		forceActive = b;
 	}
 }
