@@ -2,20 +2,22 @@
 package org.usfirst.frc.team3019.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
+
+import java.io.IOException;
+
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team3019.robot.commands.AutonomousCommandGroup;
@@ -27,6 +29,7 @@ import org.usfirst.frc.team3019.robot.subsystems.ShooterSystem;
 import org.usfirst.frc.team3019.robot.utilities.AutonomousMode;
 import org.usfirst.frc.team3019.robot.utilities.CurrentAutoCommand;
 import org.usfirst.frc.team3019.robot.utilities.PickupState;
+import org.usfirst.frc.team3019.robot.utilities.Recorder;
 import org.usfirst.frc.team3019.robot.utilities.SystemStates;
 
 /**
@@ -52,11 +55,15 @@ public class Robot extends IterativeRobot {
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<Command>();
+	SendableChooser<String> station = new SendableChooser<String>();
+	SendableChooser<Boolean> shouldRecord = new SendableChooser<Boolean>();
 	NetworkTableInstance nti = NetworkTableInstance.create();
 	NetworkTableEntry nte;
+	Recorder recorder;
 
 	public Robot() {
 		instantiateSubsystems();
+		recorder = new Recorder(1);
 		// create the chooser with all auto options
 		chooser.addDefault("DRIVEFWD", new AutonomousCommandGroup(AutonomousMode.DRIVEFWD));
 		chooser.addObject("TENSHOTRED", new AutonomousCommandGroup(AutonomousMode.TENSHOTRED));
@@ -64,6 +71,13 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("TESTAUTO", new AutonomousCommandGroup(AutonomousMode.TESTAUTOBLUE));
 		chooser.addObject("GEARBLUE", new AutonomousCommandGroup(AutonomousMode.GEARBLUE));
 		chooser.addObject("COMBOBLUE", new AutonomousCommandGroup(AutonomousMode.BLUECOMBO));
+		
+		station.addObject("Left station", "left");
+		station.addObject("Center station", "center");
+		station.addObject("Right station", "right");
+		
+		shouldRecord.addDefault("Don't record", Boolean.FALSE);
+		shouldRecord.addObject("record", Boolean.TRUE);
 	}
 
 	/**
@@ -184,13 +198,25 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("Joystick", oi.shooterSwitch.get());
 		SmartDashboard.putString("pickupState", pickupStates.toString());
 		Scheduler.getInstance().run();
+		
+		//true will be some variable deciding if the recorder should record
+		if(shouldRecord.getSelected().booleanValue() && !recorder.isRunning) {
+			recorder.start(station.getSelected() + "Lswitch or Rswitch");
+		} else if(shouldRecord.getSelected().booleanValue() == false && recorder.isRunning) {
+			recorder.stop();
+		} else {
+			try {
+				recorder.record();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void putTestInfo() {
 		SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
 		SmartDashboard.putString("buttons", Integer.toBinaryString(DriverStation.getInstance().getStickButtons(1)));
-		SmartDashboard.putString("left axis", Double.toString(DriverStation.getInstance().getStickAxis(1, 0)) + " , "
-				+ Double.toString(DriverStation.getInstance().getStickAxis(1, 1)));
+		SmartDashboard.putBoolean("Recorder on?", recorder.isRunning);
 	}
 
 	/**
@@ -198,6 +224,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		LiveWindow.run();
+		
 	}
 }

@@ -9,6 +9,9 @@ import org.usfirst.frc.team3019.robot.commands.AgitateWhile;
 import org.usfirst.frc.team3019.robot.commands.Climb;
 import org.usfirst.frc.team3019.robot.commands.ModifyShootSpeed;
 import org.usfirst.frc.team3019.robot.commands.ShootWhile;
+import org.usfirst.frc.team3019.robot.utilities.PlaybackButton;
+
+import java.lang.reflect.Field;;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -22,26 +25,46 @@ public class OI {
 	// number it is.
 	// Joystick stick = new Joystick(port);
 	// Button button = new JoystickButton(stick, buttonNumber);
-	//public Joystick xbox = new Joystick(RobotMap.xbox1Port);
+	// public Joystick xbox = new Joystick(RobotMap.xbox1Port);
 	public XboxController xbox = new XboxController(RobotMap.xbox1Port);
+
+	PlaybackButton pickupThrottle = new PlaybackButton(xbox, 2);
+	PlaybackButton climbThrottle = new PlaybackButton(xbox, 6);
+	PlaybackButton agitatorSwitch = new PlaybackButton(xbox, 1);
+	PlaybackButton shooterSwitch = new PlaybackButton(xbox, 3);
+	PlaybackButton pickupPowerSwitch = new PlaybackButton(xbox, 4);
+	PlaybackButton shootSpeedUpSwitch = new PlaybackButton(xbox, 8);
+	PlaybackButton shootSpeedDownSwitch = new PlaybackButton(xbox, 7);
+	PlaybackButton fullpowerShot = new PlaybackButton(xbox, 9);
+	PlaybackButton nerfButton = new PlaybackButton(xbox, 10);
+	PlaybackButton toggleDriveOrientation = new PlaybackButton(xbox, 5);
 	
-	Button pickupThrottle = new JoystickButton(xbox, 2);
-	Button climbThrottle = new JoystickButton(xbox, 6);
-	Button agitatorSwitch = new JoystickButton(xbox, 1);
-	Button shooterSwitch = new JoystickButton(xbox, 3);
-	Button pickupPowerSwitch = new JoystickButton(xbox, 4);
-	Button shootSpeedUpSwitch = new JoystickButton(xbox, 8);
-	Button shootSpeedDownSwitch = new JoystickButton(xbox, 7);
-	Button fullpowerShot = new JoystickButton(xbox,9);
-	Button nerfButton = new JoystickButton(xbox,10);
-	Button toggleDriveOrientation = new JoystickButton(xbox, 5); 
-	
-	public OI(){
+	/**
+	 *  Sets the value of every defined button using a boolean array
+	 *  
+	 * @param activeButtons The values to set each button to
+	 */
+	public void forceButtons(boolean[] activeButtons) {
+		Field[] fields = OI.class.getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			try {
+				PlaybackButton pb = (PlaybackButton) fields[i].get(this);
+				pb.setActive(activeButtons[pb.getNum() - 1]);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (ClassCastException e) {
+				continue;
+			}
+		}
+	}
+
+	public OI() {
 		toggleDriveOrientation.whenPressed(new Command() {
 			@Override
 			protected void initialize() {
 				RobotMap.orientForward = !RobotMap.orientForward;
 			}
+
 			@Override
 			protected boolean isFinished() {
 				return true;
@@ -52,33 +75,36 @@ public class OI {
 			protected void execute() {
 				RobotMap.SHOOTSPEED_SCALE_FACTOR = 1;
 			}
-			
+
 			@Override
 			protected boolean isFinished() {
 				return false;
 			}
+
 			@Override
 			protected void end() {
 				RobotMap.SHOOTSPEED_SCALE_FACTOR = 0.43;
 			}
 		});
 		nerfButton.whileHeld(new Command() {
-			
+
 			@Override
 			protected boolean isFinished() {
 				return false;
 			}
+
 			@Override
 			protected void execute() {
 				RobotMap.DRIVE_SCALE_FACTOR = 0.5;
-				
+
 			}
+
 			@Override
 			protected void end() {
 				RobotMap.DRIVE_SCALE_FACTOR = 1;
 			}
 		});
-		pickupThrottle.whileHeld(new Command(){
+		pickupThrottle.whileHeld(new Command() {
 
 			@Override
 			protected void execute() {
@@ -89,30 +115,30 @@ public class OI {
 			protected void end() {
 				Robot.pickupSystem.stopMotor();
 			}
-			
+
 			@Override
 			protected boolean isFinished() {
 				return false;
 			}
-			
-		});
-		pickupPowerSwitch.whileHeld(new Command(){
 
-			
+		});
+		pickupPowerSwitch.whileHeld(new Command() {
+
 			@Override
 			protected void execute() {
 				Robot.pickupSystem.runMotor();
 			}
+
 			@Override
 			protected void end() {
 				Robot.pickupSystem.stopMotor();
 			}
-			
+
 			@Override
 			protected boolean isFinished() {
 				return false;
 			}
-			
+
 		});
 		shootSpeedUpSwitch.whenPressed(new ModifyShootSpeed(true));
 		shootSpeedDownSwitch.whenPressed(new ModifyShootSpeed(false));
@@ -120,7 +146,7 @@ public class OI {
 		shooterSwitch.whileHeld(new ShootWhile());
 		climbThrottle.whileHeld(new Climb());
 	}
-	
+
 	// There are a few additional built in buttons you can use. Additionally,
 	// by subclassing Button you can create custom triggers and bind those to
 	// commands the same as any other Button.
