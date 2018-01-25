@@ -1,8 +1,5 @@
 package org.usfirst.frc.team3019.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 
 import org.usfirst.frc.team3019.robot.commands.AgitateWhile;
@@ -10,8 +7,9 @@ import org.usfirst.frc.team3019.robot.commands.Climb;
 import org.usfirst.frc.team3019.robot.commands.ModifyShootSpeed;
 import org.usfirst.frc.team3019.robot.commands.ShootWhile;
 import org.usfirst.frc.team3019.robot.utilities.PlaybackButton;
+import org.usfirst.frc.team3019.robot.utilities.PlaybackXboxController;
 
-import java.lang.reflect.Field;;
+import java.lang.reflect.Field;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -26,7 +24,7 @@ public class OI {
 	// Joystick stick = new Joystick(port);
 	// Button button = new JoystickButton(stick, buttonNumber);
 	// public Joystick xbox = new Joystick(RobotMap.xbox1Port);
-	public XboxController xbox = new XboxController(RobotMap.xbox1Port);
+	public PlaybackXboxController xbox = new PlaybackXboxController(RobotMap.xbox1Port);
 
 	PlaybackButton pickupThrottle = new PlaybackButton(xbox, 2);
 	PlaybackButton climbThrottle = new PlaybackButton(xbox, 6);

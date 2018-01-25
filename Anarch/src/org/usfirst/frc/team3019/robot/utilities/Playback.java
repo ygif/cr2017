@@ -13,18 +13,20 @@ public class Playback {
 	private final String PATH = "/home/lvuser";
 	private File file;
 	private BufferedReader br;
+	public boolean isRunning;
 	
 	public Playback(String name) {
-		file = new File(PATH + "/" + name + ".aif");
+		file = new File(PATH + "/" + name + ".txt");
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		isRunning = false;
 	}
 	
 	public void start() {
-		
+		isRunning = true;
 	}
 	
 	public void playback() {
@@ -48,12 +50,20 @@ public class Playback {
 			//set axes
 			{
 				String[] tokens = input[1].split(" ");
-				
+				double[] axisValues = new double[tokens.length];
+				for (int i = 0; i < tokens.length; i++) {
+					axisValues[i] = Double.parseDouble(tokens[i]);
+				}
+				Robot.oi.xbox.setAxisValues(axisValues);
 			}
 			//set POV buttons
 			{
 				String[] tokens = input[2].split(" ");
-				
+				int[] povValues = new int[tokens.length];
+				for (int i = 0; i < tokens.length; i++) {
+					povValues[i] = Integer.parseInt(tokens[i]);
+				}
+				Robot.oi.xbox.setPOVValues(povValues);
 			}
 		}
 	}
@@ -62,5 +72,8 @@ public class Playback {
 		Robot.oi.forceButtons(new boolean[] {
 			false, false, false, false, false, false, false, false, false, false		
 		});
+		Robot.oi.xbox.setAxisValues(new double[Robot.oi.xbox.getAxisCount()]);
+		Robot.oi.xbox.setPOVValues(new int[Robot.oi.xbox.getPOVCount()]);
+		isRunning = false;
 	}
 }

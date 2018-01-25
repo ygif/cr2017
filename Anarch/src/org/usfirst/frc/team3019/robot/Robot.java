@@ -2,7 +2,6 @@
 package org.usfirst.frc.team3019.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -128,7 +127,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-
+		recorder.stop();
 	}
 
 	@Override
@@ -173,6 +172,7 @@ public class Robot extends IterativeRobot {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
+		recorder.start();
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 	}
@@ -199,8 +199,12 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putString("pickupState", pickupStates.toString());
 		Scheduler.getInstance().run();
 		
-		//true will be some variable deciding if the recorder should record
-		if(shouldRecord.getSelected().booleanValue() && !recorder.isRunning) {
+		try {
+			recorder.record();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		/*if(shouldRecord.getSelected().booleanValue() && !recorder.isRunning) {
 			recorder.start(station.getSelected() + "Lswitch or Rswitch");
 		} else if(shouldRecord.getSelected().booleanValue() == false && recorder.isRunning) {
 			recorder.stop();
@@ -210,7 +214,7 @@ public class Robot extends IterativeRobot {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 	}
 	
 	private void putTestInfo() {

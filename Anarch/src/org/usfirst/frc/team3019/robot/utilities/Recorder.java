@@ -15,6 +15,7 @@ public class Recorder {
 	private int numOfPOV;
 	private final String PATH = "/home/lvuser";
 	private File file;
+	private FileWriter fw;
 	public boolean isRunning;
 
 	/**
@@ -26,7 +27,7 @@ public class Recorder {
 		this.joystick = joystick;
 		numOfButtons = ds.getStickButtonCount(this.joystick);
 		numOfAxes = ds.getStickAxisCount(this.joystick);
-		numOfPOV = ds.getStickPOVCount(joystick);
+		numOfPOV = ds.getStickPOVCount(this.joystick);
 		isRunning = false;
 	}
 
@@ -36,7 +37,25 @@ public class Recorder {
 	 * @param name The name of the file to write to.
 	 */
 	public void start(String name) {
-		file = new File(PATH + "/" + name + ".aif");
+		file = new File(PATH + "/" + name + ".txt");
+		file.setWritable(true);
+		file.setReadable(true);
+
+		if (file.exists()) {
+			file.delete();
+		}
+
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		isRunning = true;
+	}
+	
+	public void start() {
+		file = new File(PATH + "/temp.txt");
 		file.setWritable(true);
 		file.setReadable(true);
 
@@ -63,6 +82,10 @@ public class Recorder {
 		if (file == null || !file.exists()) {
 			throw new FileNotFoundException("start() should called before record.");
 		}
+		
+		if(fw == null) {
+			fw = new FileWriter(file);
+		}
 
 		StringBuilder sb = new StringBuilder();
 		// record button states to a string
@@ -82,13 +105,19 @@ public class Recorder {
 			sb.append(ds.getStickPOV(joystick, i) + " ");
 		}
 
-		FileWriter fw = new FileWriter(file);
-		fw.write(sb.toString() + "\n");
-		fw.close();
+		fw.append(sb.toString() + "\n");
 	}
 
 	public void stop() {
 		file = null;
+		try {
+			if(fw != null) {
+				fw.close();
+				fw = null;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		isRunning = false;
 	}
 }
