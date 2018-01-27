@@ -3,6 +3,7 @@ package org.usfirst.frc.team3019.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team3019.robot.commands.AutonomousCommandGroup;
+import org.usfirst.frc.team3019.robot.commands.Drive;
 import org.usfirst.frc.team3019.robot.subsystems.AgitatorSystem;
 import org.usfirst.frc.team3019.robot.subsystems.ClimberSystem;
 import org.usfirst.frc.team3019.robot.subsystems.Drivetrain;
@@ -28,6 +30,7 @@ import org.usfirst.frc.team3019.robot.subsystems.ShooterSystem;
 import org.usfirst.frc.team3019.robot.utilities.AutonomousMode;
 import org.usfirst.frc.team3019.robot.utilities.CurrentAutoCommand;
 import org.usfirst.frc.team3019.robot.utilities.PickupState;
+import org.usfirst.frc.team3019.robot.utilities.Playback;
 import org.usfirst.frc.team3019.robot.utilities.Recorder;
 import org.usfirst.frc.team3019.robot.utilities.SystemStates;
 
@@ -59,6 +62,7 @@ public class Robot extends IterativeRobot {
 	NetworkTableInstance nti = NetworkTableInstance.create();
 	NetworkTableEntry nte;
 	Recorder recorder;
+	Playback auto;
 
 	public Robot() {
 		instantiateSubsystems();
@@ -128,6 +132,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledInit() {
 		recorder.stop();
+		if(auto != null) {
+			auto.stop();
+			auto = null;
+		}
+		oi.xbox.setPlaybackMode(false);
 	}
 
 	@Override
@@ -150,11 +159,16 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autonomousCommand = chooser.getSelected();
+		if(auto == null) {
+			auto = new Playback();
+		}
+		auto.start();
+		oi.xbox.setPlaybackMode(true);
+		/*autonomousCommand = chooser.getSelected();
 
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null)
-			autonomousCommand.start();
+			autonomousCommand.start();*/
 	}
 
 	/**
@@ -162,16 +176,25 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		auto.playback();
+		putTestInfo();
+		SmartDashboard.putNumber("POV value", oi.xbox.getPOV());
 		SmartDashboard.putString("Current Auto Command: ", String.valueOf(currentAutoCommand));
 		Scheduler.getInstance().run();
 	}
 
 	@Override
 	public void teleopInit() {
+		if(auto != null) {
+			auto.stop();
+			auto = null;
+		}
+		oi.xbox.setPlaybackMode(false);
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
+		
 		recorder.start();
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
@@ -218,6 +241,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	private void putTestInfo() {
+		SmartDashboard.putString("left stick", oi.xbox.getX(Hand.kLeft) + " " + oi.xbox.getY(Hand.kLeft));
 		SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
 		SmartDashboard.putString("buttons", Integer.toBinaryString(DriverStation.getInstance().getStickButtons(1)));
 		SmartDashboard.putBoolean("Recorder on?", recorder.isRunning);

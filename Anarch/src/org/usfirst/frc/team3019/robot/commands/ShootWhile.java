@@ -31,11 +31,7 @@ public class ShootWhile extends Command {
 	}
 
 	protected void execute() {
-		if (RobotState.isAutonomous()) {
-			Robot.shooterSystem.setMotorSpeed(speed);
-		} else {
-			Robot.shooterSystem.runMotor();
-		}
+		Robot.shooterSystem.runMotor();
 	}
 
 	protected void end() {

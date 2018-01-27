@@ -93,13 +93,13 @@ public class Recorder {
 			sb.append(ds.getStickButton(joystick, i) + " ");
 		}
 
-		sb.append('|');
+		sb.append(';');
 		// record axis values
 		for (int i = 0; i < numOfAxes; i++) {
 			sb.append(ds.getStickAxis(joystick, i) + " ");
 		}
 
-		sb.append('|');
+		sb.append(';');
 		// record POV button states
 		for (int i = 0; i < numOfPOV; i++) {
 			sb.append(ds.getStickPOV(joystick, i) + " ");

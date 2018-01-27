@@ -2,14 +2,14 @@ package org.usfirst.frc.team3019.robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+import java.lang.reflect.Field;
+
 import org.usfirst.frc.team3019.robot.commands.AgitateWhile;
 import org.usfirst.frc.team3019.robot.commands.Climb;
 import org.usfirst.frc.team3019.robot.commands.ModifyShootSpeed;
 import org.usfirst.frc.team3019.robot.commands.ShootWhile;
 import org.usfirst.frc.team3019.robot.utilities.PlaybackButton;
 import org.usfirst.frc.team3019.robot.utilities.PlaybackXboxController;
-
-import java.lang.reflect.Field;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -37,11 +37,6 @@ public class OI {
 	PlaybackButton nerfButton = new PlaybackButton(xbox, 10);
 	PlaybackButton toggleDriveOrientation = new PlaybackButton(xbox, 5);
 	
-	/**
-	 *  Sets the value of every defined button using a boolean array
-	 *  
-	 * @param activeButtons The values to set each button to
-	 */
 	public void forceButtons(boolean[] activeButtons) {
 		Field[] fields = OI.class.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {

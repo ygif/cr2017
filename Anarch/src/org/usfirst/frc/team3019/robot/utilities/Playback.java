@@ -8,15 +8,30 @@ import java.io.IOException;
 
 import org.usfirst.frc.team3019.robot.Robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.command.Scheduler;
+
 public class Playback {
 	
 	private final String PATH = "/home/lvuser";
 	private File file;
 	private BufferedReader br;
 	public boolean isRunning;
+	private boolean atEndOfFile;
 	
 	public Playback(String name) {
 		file = new File(PATH + "/" + name + ".txt");
+		try {
+			br = new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		isRunning = false;
+		atEndOfFile = false;
+	}
+	
+	public Playback() {
+		file = new File(PATH + "/temp.txt");
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
@@ -37,7 +52,7 @@ public class Playback {
 			e.printStackTrace();
 		}
 		if(in != null) {
-			String[] input = in.split("|");
+			String[] input = in.split(";", 3);
 			//set buttons
 			{
 				String[] tokens = input[0].split(" ");
@@ -45,7 +60,8 @@ public class Playback {
 				for(int i = 0; i < tokens.length; i++) {
 					buttonStates[i] = tokens[i].equalsIgnoreCase("true");
 				}
-				Robot.oi.forceButtons(buttonStates);
+				//Robot.oi.forceButtons(buttonStates);
+				Robot.oi.xbox.setButtonValues(buttonStates);
 			}
 			//set axes
 			{
@@ -65,13 +81,15 @@ public class Playback {
 				}
 				Robot.oi.xbox.setPOVValues(povValues);
 			}
+		} else if(atEndOfFile == false) {
+			atEndOfFile = true;
+			System.out.println("Reached the end of the recording.");
 		}
 	}
 	
 	public void stop() {
-		Robot.oi.forceButtons(new boolean[] {
-			false, false, false, false, false, false, false, false, false, false		
-		});
+		Robot.oi.xbox.setButtonValues(new boolean[Robot.oi.xbox.getButtonCount()]);
+		//Robot.oi.forceButtons(new boolean[Robot.oi.xbox.getButtonCount()]);
 		Robot.oi.xbox.setAxisValues(new double[Robot.oi.xbox.getAxisCount()]);
 		Robot.oi.xbox.setPOVValues(new int[Robot.oi.xbox.getPOVCount()]);
 		isRunning = false;

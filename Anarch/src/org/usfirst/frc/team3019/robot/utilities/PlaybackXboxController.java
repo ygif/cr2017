@@ -4,14 +4,22 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class PlaybackXboxController extends XboxController{
 	
+	private boolean[] macroButtonValues;
 	private double[] macroAxisValues;
 	private int[] macroPOVValues;
 	private boolean playback = false;
 
 	public PlaybackXboxController(int port) {
 		super(port);
+		macroButtonValues = new boolean[super.getButtonCount()];
 		macroAxisValues = new double[super.getAxisCount()];
 		macroPOVValues = new int[super.getPOVCount()];
+	}
+	
+	public void setButtonValues(boolean[] values) {
+		for (int i = 0; i < values.length; i++) {
+			macroButtonValues[i] = values[i];
+		}
 	}
 	
 	public void setAxisValues(double[] values) {
@@ -28,6 +36,11 @@ public class PlaybackXboxController extends XboxController{
 	
 	public void setPlaybackMode(boolean mode) {
 		playback = mode;
+	}
+	
+	@Override
+	public boolean getRawButton(int button) {
+		return (playback) ? macroButtonValues[button - 1] : super.getRawButton(button);
 	}
 	
 	@Override

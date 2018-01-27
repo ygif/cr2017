@@ -22,7 +22,6 @@ public class Climb extends Command {
 	
 	protected void end(){
 		Robot.climberSystem.stopMotor();
-		System.out.println(timeSinceInitialized());
 	}
 	
 	protected void interrupted(){		end();
