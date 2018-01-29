@@ -21,7 +21,6 @@ import java.io.IOException;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team3019.robot.commands.AutonomousCommandGroup;
-import org.usfirst.frc.team3019.robot.commands.Drive;
 import org.usfirst.frc.team3019.robot.subsystems.AgitatorSystem;
 import org.usfirst.frc.team3019.robot.subsystems.ClimberSystem;
 import org.usfirst.frc.team3019.robot.subsystems.Drivetrain;
@@ -66,7 +65,7 @@ public class Robot extends IterativeRobot {
 
 	public Robot() {
 		instantiateSubsystems();
-		recorder = new Recorder(1);
+		recorder = new Recorder(RobotMap.xbox1Port);
 		// create the chooser with all auto options
 		chooser.addDefault("DRIVEFWD", new AutonomousCommandGroup(AutonomousMode.DRIVEFWD));
 		chooser.addObject("TENSHOTRED", new AutonomousCommandGroup(AutonomousMode.TENSHOTRED));
@@ -90,11 +89,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		oi = new OI();
-
-		nti = NetworkTableInstance.create();
-		nti.startServer();
-		nte = new NetworkTableEntry(nti, NetworkTableEntry.kPersistent);
-		nte.setDefaultDouble(0.0);
 
 		/*new Thread(() -> {
 

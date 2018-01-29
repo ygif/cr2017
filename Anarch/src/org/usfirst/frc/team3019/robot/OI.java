@@ -2,8 +2,6 @@ package org.usfirst.frc.team3019.robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-import java.lang.reflect.Field;
-
 import org.usfirst.frc.team3019.robot.commands.AgitateWhile;
 import org.usfirst.frc.team3019.robot.commands.Climb;
 import org.usfirst.frc.team3019.robot.commands.ModifyShootSpeed;
@@ -36,20 +34,6 @@ public class OI {
 	PlaybackButton fullpowerShot = new PlaybackButton(xbox, 9);
 	PlaybackButton nerfButton = new PlaybackButton(xbox, 10);
 	PlaybackButton toggleDriveOrientation = new PlaybackButton(xbox, 5);
-	
-	public void forceButtons(boolean[] activeButtons) {
-		Field[] fields = OI.class.getDeclaredFields();
-		for (int i = 0; i < fields.length; i++) {
-			try {
-				PlaybackButton pb = (PlaybackButton) fields[i].get(this);
-				pb.setActive(activeButtons[pb.getNum() - 1]);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (ClassCastException e) {
-				continue;
-			}
-		}
-	}
 
 	public OI() {
 		toggleDriveOrientation.whenPressed(new Command() {

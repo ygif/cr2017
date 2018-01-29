@@ -4,7 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
+
+import org.usfirst.frc.team3019.robot.RobotMap;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Recorder {
 
@@ -13,6 +19,7 @@ public class Recorder {
 	private int numOfButtons;
 	private int numOfAxes;
 	private int numOfPOV;
+	private double startTime;
 	private final String PATH = "/home/lvuser";
 	private File file;
 	private FileWriter fw;
@@ -20,7 +27,8 @@ public class Recorder {
 
 	/**
 	 * 
-	 * @param joystick joystick port number
+	 * @param joystick
+	 *            joystick port number
 	 */
 	public Recorder(int joystick) {
 		ds = DriverStation.getInstance();
@@ -28,13 +36,15 @@ public class Recorder {
 		numOfButtons = ds.getStickButtonCount(this.joystick);
 		numOfAxes = ds.getStickAxisCount(this.joystick);
 		numOfPOV = ds.getStickPOVCount(this.joystick);
+		startTime = Timer.getFPGATimestamp();
 		isRunning = false;
 	}
 
 	/**
-	 * Start recording input data from a joystick
+	 * Start recording input data from a joystick into the file with the specified name
 	 * 
-	 * @param name The name of the file to write to.
+	 * @param name
+	 *            The name of the file to write to.
 	 */
 	public void start(String name) {
 		file = new File(PATH + "/" + name + ".txt");
@@ -53,7 +63,10 @@ public class Recorder {
 
 		isRunning = true;
 	}
-	
+
+	/**
+	 * Start recording input data from a joystick into a file called temp
+	 */
 	public void start() {
 		file = new File(PATH + "/temp.txt");
 		file.setWritable(true);
@@ -69,6 +82,14 @@ public class Recorder {
 			e.printStackTrace();
 		}
 
+		try {
+			fw = new FileWriter(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		writeRobotConstants();
+
 		isRunning = true;
 	}
 
@@ -83,11 +104,9 @@ public class Recorder {
 			throw new FileNotFoundException("start() should called before record.");
 		}
 		
-		if(fw == null) {
-			fw = new FileWriter(file);
-		}
-
 		StringBuilder sb = new StringBuilder();
+		sb.append(Timer.getFPGATimestamp() - startTime
+				+ " " + RobotController.getBatteryVoltage() + " ;");
 		// record button states to a string
 		for (int i = 1; i <= numOfButtons; i++) {
 			sb.append(ds.getStickButton(joystick, i) + " ");
@@ -108,10 +127,31 @@ public class Recorder {
 		fw.append(sb.toString() + "\n");
 	}
 
+	/**
+	 * Records the value of some constants in the RobotMap class
+	 */
+	private void writeRobotConstants() {
+		try {
+			fw.append("Constants ");
+			Field[] cons = RobotMap.class.getDeclaredFields();
+			for (int i = 0; i < cons.length; i++) {
+				String s = cons[i].getName();
+				if (s.contains("SCALE_FACTOR")) {
+					fw.append(s + " " + cons[i].getDouble(RobotMap.class) + " ");
+				} else if(s.contains("orientForward")) {
+					fw.append(s + " " + cons[i].getBoolean(RobotMap.class) + " ");
+				}
+			}
+			fw.append("\n");
+		} catch (IOException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void stop() {
 		file = null;
 		try {
-			if(fw != null) {
+			if (fw != null) {
 				fw.close();
 				fw = null;
 			}
