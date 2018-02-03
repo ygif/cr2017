@@ -72,7 +72,7 @@ public class Robot extends IterativeRobot {
 		
 		switchSide.addDefault("Left", "L");
 		switchSide.addObject("Right", "R");
-		SmartDashboard.putData(switchSide);
+		SmartDashboard.putData("Switch Side", switchSide);
 	}
 
 	/**
