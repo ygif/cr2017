@@ -25,7 +25,7 @@ public class OI {
 	public PlaybackXboxController xbox = new PlaybackXboxController(RobotMap.xbox1Port);
 
 	PlaybackButton pickupThrottle = new PlaybackButton(xbox, 2);
-	PlaybackButton climbThrottle = new PlaybackButton(xbox, 6);
+	PlaybackButton climbThrottle = new PlaybackButton(xbox, 6);//should be 6
 	PlaybackButton agitatorSwitch = new PlaybackButton(xbox, 1);
 	PlaybackButton shooterSwitch = new PlaybackButton(xbox, 3);
 	PlaybackButton pickupPowerSwitch = new PlaybackButton(xbox, 4);

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.CvSink;
@@ -58,28 +59,26 @@ public class Robot extends IterativeRobot {
 	SendableChooser<Command> chooser = new SendableChooser<Command>();
 	SendableChooser<String> station = new SendableChooser<String>();
 	SendableChooser<Boolean> shouldRecord = new SendableChooser<Boolean>();
-	NetworkTableInstance nti = NetworkTableInstance.create();
-	NetworkTableEntry nte;
+	SendableChooser<String> switchSide = new SendableChooser<String>();
 	Recorder recorder;
 	Playback auto;
 
 	public Robot() {
 		instantiateSubsystems();
 		recorder = new Recorder(RobotMap.xbox1Port);
-		// create the chooser with all auto options
-		chooser.addDefault("DRIVEFWD", new AutonomousCommandGroup(AutonomousMode.DRIVEFWD));
-		chooser.addObject("TENSHOTRED", new AutonomousCommandGroup(AutonomousMode.TENSHOTRED));
-		chooser.addObject("TENSHOTBLUE", new AutonomousCommandGroup(AutonomousMode.TENSHOTBLUE));
-		chooser.addObject("TESTAUTO", new AutonomousCommandGroup(AutonomousMode.TESTAUTOBLUE));
-		chooser.addObject("GEARBLUE", new AutonomousCommandGroup(AutonomousMode.GEARBLUE));
-		chooser.addObject("COMBOBLUE", new AutonomousCommandGroup(AutonomousMode.BLUECOMBO));
 		
-		station.addObject("Left station", "left");
+		station.addDefault("Left station", "left");
 		station.addObject("Center station", "center");
 		station.addObject("Right station", "right");
+		SmartDashboard.putData("Alliance station", station);
 		
 		shouldRecord.addDefault("Don't record", Boolean.FALSE);
 		shouldRecord.addObject("record", Boolean.TRUE);
+		SmartDashboard.putData("Toggle Recorder", shouldRecord);
+		
+		switchSide.addDefault("Left", "L");
+		switchSide.addObject("Right", "R");
+		SmartDashboard.putData(switchSide);
 	}
 
 	/**
@@ -154,15 +153,12 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		if(auto == null) {
-			auto = new Playback();
+			String name = DriverStation.getInstance().getGameSpecificMessage().substring(0, 1);
+			name += station.getSelected();
+			auto = new Playback(name);
 		}
 		auto.start();
 		oi.xbox.setPlaybackMode(true);
-		/*autonomousCommand = chooser.getSelected();
-
-		// schedule the autonomous command (example)
-		if (autonomousCommand != null)
-			autonomousCommand.start();*/
 	}
 
 	/**
@@ -184,14 +180,6 @@ public class Robot extends IterativeRobot {
 			auto = null;
 		}
 		oi.xbox.setPlaybackMode(false);
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
-		
-		recorder.start();
-		if (autonomousCommand != null)
-			autonomousCommand.cancel();
 	}
 
 	/**
@@ -209,29 +197,25 @@ public class Robot extends IterativeRobot {
 			pickupSystem.stopMotor();
 		}
 
+		if(shouldRecord.getSelected().booleanValue() && !recorder.isRunning) {
+			recorder.start(switchSide.getSelected() + station.getSelected());
+		} else if(shouldRecord.getSelected().booleanValue() == false && recorder.isRunning) {
+			recorder.stop();
+		}
+		if(recorder.isRunning) {
+			try {
+				recorder.record();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		putTestInfo();
 		SmartDashboard.putNumber("drivefactor", RobotMap.DRIVE_SCALE_FACTOR);
 		SmartDashboard.putNumber("shooterSpeed", RobotMap.SHOOTSPEED_SCALE_FACTOR);
 		SmartDashboard.putBoolean("Joystick", oi.shooterSwitch.get());
 		SmartDashboard.putString("pickupState", pickupStates.toString());
 		Scheduler.getInstance().run();
-		
-		try {
-			recorder.record();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		/*if(shouldRecord.getSelected().booleanValue() && !recorder.isRunning) {
-			recorder.start(station.getSelected() + "Lswitch or Rswitch");
-		} else if(shouldRecord.getSelected().booleanValue() == false && recorder.isRunning) {
-			recorder.stop();
-		} else {
-			try {
-				recorder.record();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}*/
 	}
 	
 	private void putTestInfo() {

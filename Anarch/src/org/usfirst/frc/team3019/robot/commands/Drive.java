@@ -1,7 +1,6 @@
 package org.usfirst.frc.team3019.robot.commands;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -51,7 +50,11 @@ public class Drive extends Command {
 			move = Robot.oi.xbox.getY(Hand.kLeft);
 			turn = Robot.oi.xbox.getX(Hand.kLeft);
 		}
-
+		
+		
+		double axis = Robot.oi.xbox.getTriggerAxis(Hand.kRight) * 0.5 + 0.5;
+		double throttle = RobotMap.orientForward ? axis : -axis;
+		double t = Robot.oi.xbox.getX(Hand.kLeft);
 		Robot.driveTrain.arcadeDrive(move, turn);
 	}
 

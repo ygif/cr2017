@@ -41,7 +41,8 @@ public class Recorder {
 	}
 
 	/**
-	 * Start recording input data from a joystick into the file with the specified name
+	 * Start recording input data from a joystick into the file with the specified
+	 * name
 	 * 
 	 * @param name
 	 *            The name of the file to write to.
@@ -60,6 +61,14 @@ public class Recorder {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		try {
+			fw = new FileWriter(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		writeRobotConstants();
 
 		isRunning = true;
 	}
@@ -101,12 +110,16 @@ public class Recorder {
 	 */
 	public void record() throws IOException {
 		if (file == null || !file.exists()) {
-			throw new FileNotFoundException("start() should called before record.");
+			throw new FileNotFoundException("start() should be called before record.");
 		}
 		
+		if(fw == null) {
+			System.out.println("Skipped recording inputs, no file writer.");
+			return;
+		}
+
 		StringBuilder sb = new StringBuilder();
-		sb.append(Timer.getFPGATimestamp() - startTime
-				+ " " + RobotController.getBatteryVoltage() + " ;");
+		sb.append((Timer.getFPGATimestamp() - startTime) + " " + RobotController.getBatteryVoltage() + " ;");
 		// record button states to a string
 		for (int i = 1; i <= numOfButtons; i++) {
 			sb.append(ds.getStickButton(joystick, i) + " ");
@@ -131,19 +144,26 @@ public class Recorder {
 	 * Records the value of some constants in the RobotMap class
 	 */
 	private void writeRobotConstants() {
-		try {
-			fw.append("Constants ");
-			Field[] cons = RobotMap.class.getDeclaredFields();
-			for (int i = 0; i < cons.length; i++) {
-				String s = cons[i].getName();
+		StringBuilder temp = new StringBuilder("Constants ");
+		Field[] cons = RobotMap.class.getDeclaredFields();
+		for (int i = 0; i < cons.length; i++) {
+			String s = cons[i].getName();
+			try {
 				if (s.contains("SCALE_FACTOR")) {
-					fw.append(s + " " + cons[i].getDouble(RobotMap.class) + " ");
-				} else if(s.contains("orientForward")) {
-					fw.append(s + " " + cons[i].getBoolean(RobotMap.class) + " ");
+
+					temp.append(s + " " + cons[i].getDouble(RobotMap.class) + " ");
+				} else if (s.contains("orientForward")) {
+					temp.append(s + " " + cons[i].getBoolean(RobotMap.class) + " ");
 				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
 			}
-			fw.append("\n");
-		} catch (IOException | IllegalAccessException e) {
+
+		}
+		temp.append("\n");
+		try {
+			fw.append(temp);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

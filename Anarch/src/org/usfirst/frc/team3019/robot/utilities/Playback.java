@@ -17,24 +17,28 @@ public class Playback {
 	private File file;
 	private BufferedReader br;
 	public boolean isRunning;
-	private boolean atEndOfFile;
+	private ArrayList<String> values;
 	private ArrayList<String> fieldValues;
+	private int loc;
 
 	/**
 	 * Creates an instance of Playback using the file with the specified name
-	 * @param name file to load
+	 * 
+	 * @param name
+	 *            file to load
 	 */
 	public Playback(String name) {
 		file = new File(PATH + "/" + name + ".txt");
+		values = new ArrayList<String>();
+		loc = 0;
 		fieldValues = new ArrayList<String>();
-		storeCurrentConstants();
+		// storeCurrentConstants();
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		isRunning = false;
-		atEndOfFile = false;
 	}
 
 	/**
@@ -42,36 +46,43 @@ public class Playback {
 	 */
 	public Playback() {
 		file = new File(PATH + "/temp.txt");
+		values = new ArrayList<String>();
+		loc = 0;
 		fieldValues = new ArrayList<String>();
-		storeCurrentConstants();
+		// storeCurrentConstants();
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		isRunning = false;
-		atEndOfFile = false;
 	}
 
 	public void start() {
 		isRunning = true;
-		setTempConstants();
+		System.out.println("start of recording");
+		try {
+			String in = br.readLine();
+			while (in != null) {
+				values.add(in);
+				in = br.readLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// setTempConstants();
 	}
-	
+
 	/**
 	 * Set RobotMap constant values to the values recorded on the file
 	 */
 	private void setTempConstants() {
-		String in = "";
-		try {
-			in = br.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (in.contains("Constants")) {
+
+		if (values.get(0).contains("Constants")) {
 			// 0 is Constants
 			// i the variable's name, i + 1 is its value
-			String[] cons = in.split(" ");
+			String[] cons = values.get(0).split(" ");
 			for (int i = 1; i < cons.length; i += 2) {
 
 				Field[] temp = RobotMap.class.getDeclaredFields();
@@ -92,14 +103,12 @@ public class Playback {
 	}
 
 	public void playback() {
-		String in = "";
-		try {
-			in = br.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (in != null) {
-			String[] input = in.split(";", 4);
+		if (loc < values.size()) {
+			if (values.get(loc).contains("Constants")) {
+				loc++;
+				return;
+			}
+			String[] input = values.get(loc).split(";", 4);
 			// At the moment input[0] contains a timestamp and the battery voltage
 			// if the information is necessary to use in the future.
 			// set buttons
@@ -129,9 +138,10 @@ public class Playback {
 				}
 				Robot.oi.xbox.setPOVValues(povValues);
 			}
-		} else if (atEndOfFile == false) {
-			atEndOfFile = true;
-			System.out.println("Reached the end of the recording.");
+			loc++;
+		} else if (loc == values.size()) {
+			System.out.println("Reached the end of the recording");
+			loc++;
 		}
 	}
 
@@ -142,7 +152,7 @@ public class Playback {
 		setCurrentConstants();
 		isRunning = false;
 	}
-	
+
 	/**
 	 * Stores current RobotMap values in an ArrayList
 	 */

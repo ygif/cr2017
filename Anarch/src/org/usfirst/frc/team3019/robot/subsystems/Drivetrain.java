@@ -41,4 +41,8 @@ public class Drivetrain extends Subsystem {
 	public void arcadeDrive(double moveValue, double rotateValue){
 		dd.arcadeDrive(moveValue * RobotMap.DRIVE_SCALE_FACTOR, rotateValue * RobotMap.DRIVE_SCALE_FACTOR);
 	}
+	
+	public void tankDrive(double leftSpeed, double rightSpeed) {
+		dd.tankDrive(-leftSpeed, -rightSpeed);
+	}
 }
