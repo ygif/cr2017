@@ -51,7 +51,6 @@ public class Drive extends Command {
 			turn = Robot.oi.xbox.getX(Hand.kLeft);
 		}
 		
-		
 		double axis = Robot.oi.xbox.getTriggerAxis(Hand.kRight) * 0.5 + 0.5;
 		double throttle = RobotMap.orientForward ? axis : -axis;
 		double t = Robot.oi.xbox.getX(Hand.kLeft);

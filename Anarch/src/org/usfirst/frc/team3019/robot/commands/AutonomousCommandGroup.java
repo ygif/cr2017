@@ -15,7 +15,7 @@ public class AutonomousCommandGroup extends CommandGroup {
     
     public  AutonomousCommandGroup(AutonomousMode mode) {
     	
-    	if(mode == AutonomousMode.DRIVEFWD){  
+    	/*if(mode == AutonomousMode.DRIVEFWD){  
     		addSequential(new Drive(1,0) , 1);
     		addSequential(new Drive(0,0) , 0.1);
     	}else if(mode == AutonomousMode.TENSHOTRED){
@@ -128,7 +128,7 @@ public class AutonomousCommandGroup extends CommandGroup {
     		addSequential(new Drive(-0.80,0.33),0.55);
     		addSequential(new Drive(0,0),0.3);
     		
-    	}
+    	}*/
     	
     	
      }

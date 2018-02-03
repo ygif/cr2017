@@ -32,7 +32,7 @@ public class Playback {
 		values = new ArrayList<String>();
 		loc = 0;
 		fieldValues = new ArrayList<String>();
-		// storeCurrentConstants();
+		storeCurrentConstants();
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
@@ -49,7 +49,7 @@ public class Playback {
 		values = new ArrayList<String>();
 		loc = 0;
 		fieldValues = new ArrayList<String>();
-		// storeCurrentConstants();
+		storeCurrentConstants();
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
@@ -60,7 +60,7 @@ public class Playback {
 
 	public void start() {
 		isRunning = true;
-		System.out.println("start of recording");
+		System.out.println("Started playing back recording.");
 		try {
 			String in = br.readLine();
 			while (in != null) {
@@ -71,14 +71,13 @@ public class Playback {
 			e.printStackTrace();
 		}
 
-		// setTempConstants();
+		setTempConstants();
 	}
 
 	/**
 	 * Set RobotMap constant values to the values recorded on the file
 	 */
 	private void setTempConstants() {
-
 		if (values.get(0).contains("Constants")) {
 			// 0 is Constants
 			// i the variable's name, i + 1 is its value
@@ -163,9 +162,9 @@ public class Playback {
 			if (s.contains("SCALE_FACTOR") || s.equals("orientForward")) {
 				fieldValues.add(temp[i].getName());
 				try {
-					if (temp[i].getType().equals(Double.class)) {
+					if (temp[i].getType().equals(double.class)) {
 						fieldValues.add(Double.toString(temp[i].getDouble(RobotMap.class)));
-					} else if (temp[i].getType().equals(Boolean.class)) {
+					} else if (temp[i].getType().equals(boolean.class)) {
 						fieldValues.add(Boolean.toString(temp[i].getBoolean(RobotMap.class)));
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -188,7 +187,7 @@ public class Playback {
 				try {
 					if (temp[j].getName().equals("orientForward")) {
 						temp[j].setBoolean(RobotMap.class, Boolean.parseBoolean(fieldValues.get(i + 1)));
-					} else if (temp[j].getName().equals(fieldValues.get(i + 1))) {
+					} else if (temp[j].getName().equals(fieldValues.get(i))) {
 						temp[j].setDouble(RobotMap.class, Double.parseDouble(fieldValues.get(i + 1)));
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {

@@ -6,9 +6,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.CvSink;
@@ -21,13 +18,11 @@ import java.io.IOException;
 
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
-import org.usfirst.frc.team3019.robot.commands.AutonomousCommandGroup;
 import org.usfirst.frc.team3019.robot.subsystems.AgitatorSystem;
 import org.usfirst.frc.team3019.robot.subsystems.ClimberSystem;
 import org.usfirst.frc.team3019.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3019.robot.subsystems.PickupSystem;
 import org.usfirst.frc.team3019.robot.subsystems.ShooterSystem;
-import org.usfirst.frc.team3019.robot.utilities.AutonomousMode;
 import org.usfirst.frc.team3019.robot.utilities.CurrentAutoCommand;
 import org.usfirst.frc.team3019.robot.utilities.PickupState;
 import org.usfirst.frc.team3019.robot.utilities.Playback;
@@ -46,7 +41,6 @@ public class Robot extends IterativeRobot {
 
 	public static SystemStates pickupPowerState = SystemStates.OFF;
 	public static PickupState pickupStates = PickupState.INTAKE;
-	public static CurrentAutoCommand currentAutoCommand = CurrentAutoCommand.STOP;
 
 	public static Drivetrain driveTrain;
 	public static PickupSystem pickupSystem;
@@ -168,8 +162,6 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		auto.playback();
 		putTestInfo();
-		SmartDashboard.putNumber("POV value", oi.xbox.getPOV());
-		SmartDashboard.putString("Current Auto Command: ", String.valueOf(currentAutoCommand));
 		Scheduler.getInstance().run();
 	}
 
@@ -211,7 +203,6 @@ public class Robot extends IterativeRobot {
 		}
 		
 		putTestInfo();
-		SmartDashboard.putNumber("drivefactor", RobotMap.DRIVE_SCALE_FACTOR);
 		SmartDashboard.putNumber("shooterSpeed", RobotMap.SHOOTSPEED_SCALE_FACTOR);
 		SmartDashboard.putBoolean("Joystick", oi.shooterSwitch.get());
 		SmartDashboard.putString("pickupState", pickupStates.toString());
@@ -219,9 +210,9 @@ public class Robot extends IterativeRobot {
 	}
 	
 	private void putTestInfo() {
+		SmartDashboard.putNumber("drivefactor", RobotMap.DRIVE_SCALE_FACTOR);
 		SmartDashboard.putString("left stick", oi.xbox.getX(Hand.kLeft) + " " + oi.xbox.getY(Hand.kLeft));
 		SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
-		SmartDashboard.putString("buttons", Integer.toBinaryString(DriverStation.getInstance().getStickButtons(1)));
 		SmartDashboard.putBoolean("Recorder on?", recorder.isRunning);
 	}
 

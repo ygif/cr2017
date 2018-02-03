@@ -36,7 +36,6 @@ public class Recorder {
 		numOfButtons = ds.getStickButtonCount(this.joystick);
 		numOfAxes = ds.getStickAxisCount(this.joystick);
 		numOfPOV = ds.getStickPOVCount(this.joystick);
-		startTime = Timer.getFPGATimestamp();
 		isRunning = false;
 	}
 
@@ -70,6 +69,8 @@ public class Recorder {
 
 		writeRobotConstants();
 
+		startTime = Timer.getFPGATimestamp();
+		
 		isRunning = true;
 	}
 
@@ -98,6 +99,8 @@ public class Recorder {
 		}
 
 		writeRobotConstants();
+		
+		startTime = Timer.getFPGATimestamp();
 
 		isRunning = true;
 	}
